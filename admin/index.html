@@ -55,4 +55,39 @@
         </div>
     </div>
 </body>
+<script src="./libs/http.js"></script>
+<script>
+    $(function(){
+        //一进入index.html页面就应该发送ajax请求获取用户的信息并渲染到页面上
+        $.ajax({
+            // url: "http://localhost:8080/api/v1/admin/user/info",
+            url : window.BigNew.user_info,
+            type : 'get',
+            // dataType: 'json' //将返回的json格式的字符串转换成一个对象
+            // 设置请求头，在请求头中带上token
+            // headers: {
+            //     'Authorization': window.localStorage.getIt('token')
+            // },
+            success : function(res){
+                console.log(res);
+                //修改图片
+                $('.user_info img').attr('src',res.data.userPic)
+                // 修改用户名
+                $('.user_info span').html('欢迎&nbsp;&nbsp;'+res.data.nickname+'');
+                //修改顶部的头像图片
+                $('.user_center_link>img').attr('src',res.data.userPic);
+            }
+        })
+
+        //退出处理
+        //1.获取退出元素，注册点击事件
+        // 2.点击退出的时候，回到登录页面，将token清除
+        $('.logout').on('click',function(){
+            //清除token
+            window.localStorage.removeItem('token');
+            //退出当前页面回到登录页
+            window.location.href='./login.html';
+        })
+    })
+</script>
 </html>
