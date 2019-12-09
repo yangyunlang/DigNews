@@ -68,6 +68,87 @@
             </form>
         </div>
     </div>
+
+    <script src="./libs/http.js"></script> 
+    <script>
+        $(function(){
+            //1.页面一加载：ajax请求个人信息，渲染
+            $.ajax({
+                url : BigNew.user_detail,
+                type: 'get',
+                dataType:'json',
+                success: function(res){
+                    console.log(res);
+                    //渲染页面
+                    // $('input.username').val(res.data.username);
+                    // $('input.nickname').val(res.data.nickname);
+                    // $('input.email').val(res.data.email);
+                    // $('input.password').val(res.data.password);
+                    //遍历对象优化代码
+                    for(var key in res.data){
+                        $('input.' + key).val(res.data[key]);
+                    }
+                    $('img.user_pic').attr('src',res.data.userPic)
+                }
+            });
+
+            //给文件注册一个change事件，当选择图片之后，在图片标签中展示我们选择的图片
+            //用来处理用户选择图片的时候，有一个预览效果
+            $('#exampleInputFile').on('change',function(){
+                //获取图片
+                let imgFile = this.files[0];
+                let url = URL.createObjectURL(imgFile);
+                console.log(url);
+                //修改图片的地址
+                $('img.user_pic').attr('src',url);
+            })
+
+            //修改按钮注册点击事件
+            $('.btn-edit').on('click',function(e){
+                //阻止默认行为
+                e.preventDefault();
+
+                //获取表单数据
+                var form = $('#form')[0];
+                console.log('这是表单',form);
+                var userdata = new FormData(form);
+                console.log(userdata);
+                //发送ajax请求，目的是修改服务器中的数据
+                $.ajax({
+                    url: BigNew.user_edit,
+                    type: 'post',
+                    data: userdata,
+                    //阻止编译
+                    processData:false,
+                    //不需要设置请求的类型
+                    contentType:false,
+                    //监听
+                    success : function(res){
+                        console.log('返回的数据',res);
+                        if(res.code == 200){
+                            //刷新一下当前页面
+                            // window.location.reload();
+                            //在子页刷新父页
+                            // parent.window.loction.reload();
+
+                            //这次请求是为了父页的用户名和头像
+                            $.ajax({
+                                url: window.BigNew.user_info,
+                                type:'get',
+                                success : function(res){
+                                    console.log('获取修改后返回的数据',res);
+                                    //获取服务器返回的数据，使用这些数据去渲染页面的主要内容
+                                    parent.$('.user_info img').attr('src',res.data.userPic);
+                                    parent.$('.user_info span').html('欢迎&nbsp;&nbsp;' + res.data.nickname + '');
+                                    parent.$('.user_center_link>img').attr('src',res.data.userPic)
+                                }
+                            })
+                        }
+                    }
+                })
+            })
+        })
+    </script>
 </body>
 
 </html>
