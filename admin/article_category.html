@@ -62,7 +62,8 @@
             </div>
             <div class="modal-body">
               <form>
-                <input type="hidden" name="id" class="control-label">
+                <!-- 使用这个隐藏才存储文章分类id -->
+                <input type="hidden" name="id" id="cateid" class="control-label">
                 <div class="form-group">
                   <label for="recipient-name" class="control-label">文章分类名称</label>
                   <input type="text" class="form-control" id="recipient-name">
@@ -116,19 +117,82 @@
             $('#myModal').on('show.bs.modal',function(e){
                 // e.relatedTarget获取到的就是触发这个模态框显示的dom元素
                 let dom = e.relatedTarget;
-                console.log(e.relatedTarget);
-                if(target == $('#xinzengfenlei')[0]){
-                    //执行新增分类逻辑
-                    alert('你点击了新增按钮');
-                    //设置按钮文本为新增
-                    $('#myModal .confirm').text('新增');
-                }else {
-                    //执行编辑分类逻辑
-                    alert('你点击了编辑按钮');
-                    //设置按钮文本为编辑
-                    $('#mymodal .comfirm').text('编辑')；
+                // console.log(e.relatedTarget);
+                //判断到底是谁触发了这个模态框显示
+                //假设是新增按钮#xinzengfenlei
+                if(dom == $('#xinzengfenlei')[0]){
+                    $('#exampleModalLabel').text('新增文章分类');
+                    $('#btn-confirm').text('新增').addClass("btn-success").removeClass("btn-primary");
+                    //将表单中的数据全部重置，而reset()重置这个方法是原生对象的
+                    $('form')[0].reset();
+                    //给模态框中的确定按钮注册点击事件
+                    $('#btn-confirm').on('click',function(){
+                        //获取模态框的子标题
+                        let name = $('#recipient-name').val();
+                        let slug = $("#message-text").val();
+                        if(name == '' || slug == ''){
+                            alert('请填写内容');
+                            return;
+                        }
+                        $.post({
+                            url : BigNew.category_add,
+                            data:{
+                                name:name,
+                                slug:slug
+                            },
+                            success:function(res){
+                                if(res.code == 201){
+                                    $('#myModal').modal('hide');
+                                    getData();
+                                }
+                            }
+                        })
+                    })
+                }else{
+                    //修改模态框标题
+                    $('#exampleModalLabel').text('编辑文章分类');
+                    $('#btn-confirm').text('编辑').addClass('btn-primary').removeClass('btn-success');
+                    //当弹出编辑的模态框的时候，需要得到一个文章类别id,根据这个id,发送ajax请求获得具体的文章类别信息
+                    let cateId = $(dom).attr('data-id');
+                    // console.log(cateId);
+                    $.get({
+                        url: BigNew.category_search,
+                        data:{
+                            id:cateId
+                        },
+                        success:function(res){
+                            if(res.code==200){
+                                //渲染到页面
+                                $('#recipient-name').val(res.data[0].name);
+                                $('#message-text').val(res.data[0].slug);
+                                $('#cateid').val(res.data[0].id);
+                            }
+                        }
+                    })
+                    //给确定按钮注册点击事件
+                    $('#btn-confirm').on('click',function(){
+                        //获取内容
+                        let name = $('#recipient-name').val();
+                        let slug = $('#message-text').val();
+                        let id = $('cateid').val();
+                        $.post({
+                            url:BigNew.category_edit,
+                            data:{
+                                id:id,
+                                name:name,
+                                slug:slug
+                            },
+                            success: function (res) {
+                                // console.log(res);
+                                if (res.code == 200) {
+                                    $('#myModal').modal('hide')
+                                    getData();
+                                }
+                            }
+                        })
+                    })
                 }
-                
+                    
             });
 
             //取消按钮点击事件
