@@ -215,6 +215,29 @@
                     window.location.reload();
                 }
             })
+
+            //给删除按钮注册一个点击事件
+            //因为数据是动态生成的，所有我们不能直接给他注册点击事件，需要使用事件委派
+            $('tbody').on('click','#btn-delete',function(){
+                //获取到id
+                let deleteId = $(this).attr('data-id');
+                console.log(deleteId);
+                let ans = confirm('你确定要删除吗？');
+                console.log(ans);
+                if(ans){
+                    $.post({
+                        url:BigNew.category_delete,
+                        data:{
+                            id:deleteId
+                        },
+                        success:function(res){
+                            if(res.code == 204){
+                                getData();
+                            }
+                        }
+                    })
+                }
+            })
         })
     </script>
 </body>
