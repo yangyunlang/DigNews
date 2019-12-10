@@ -53,7 +53,7 @@
     </div>
 
     <!-- bootstrap中的模态框 -->
-    <!-- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -79,7 +79,7 @@
             </div>
           </div>
         </div>
-    </div> -->
+    </div>
 
     <script src='./libs/http.js'></script>
     <script type="text/html" id="categoryList">
@@ -110,6 +110,47 @@
                     }
                 })
             }
+
+
+            //当模态框在显示的时候，我们需要知道是哪一个按钮被点击了
+            $('#myModal').on('show.bs.modal',function(e){
+                // e.relatedTarget获取到的就是触发这个模态框显示的dom元素
+                let dom = e.relatedTarget;
+                console.log(e.relatedTarget);
+                if(target == $('#xinzengfenlei')[0]){
+                    //执行新增分类逻辑
+                    alert('你点击了新增按钮');
+                    //设置按钮文本为新增
+                    $('#myModal .confirm').text('新增');
+                }else {
+                    //执行编辑分类逻辑
+                    alert('你点击了编辑按钮');
+                    //设置按钮文本为编辑
+                    $('#mymodal .comfirm').text('编辑')；
+                }
+                
+            });
+
+            //取消按钮点击事件
+            $('#modal .cancel').on('click',function(e){
+                //隐藏模态框
+                $('#myModal').modal('hide');
+            });
+
+            //确定按钮点击事件
+            $('#muModal .confirm').on('click',function(e,a){
+                //do s
+                if($(this).text() == '新增'){
+                    alert('新增成功');
+                    //刷新页面
+                    window.location.reload();
+                }else {
+                    //编辑
+                    alert('编辑成功');
+                    //刷新页面
+                    window.location.reload();
+                }
+            })
         })
     </script>
 </body>
