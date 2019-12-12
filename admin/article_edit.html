@@ -148,7 +148,7 @@
                 e.preventDefault();
                 //使用formData的方式来提交数据
                 let fd = new FormData($('#form'[0]));
-                fd.append('content',editor.text.html());
+                fd.append('content',editor.txt.html());
                 //修改完文章，默认是已经发布
                 fd.append('state','已发布');
                 fd.append('id',articleId);
@@ -166,6 +166,32 @@
                     }
                 })
             })
+
+            //存草稿的功能
+            $('button.btn-draft').on('click',function(e){
+                //阻止默认行为
+                e.preventDefault();
+                //使用formData的方式来提交数据
+                let fd = new FormData($('#form')[0]);
+                fd.append('content',editor.txt.html());
+                //修改完文章，默认是已经发布
+                // fd.append('state', '已发布');
+                fd.append('id', articleId);
+
+                //发送ajax请求
+                $.post({
+                    url: BigNew.article_edit,
+                    data:fd,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                        if (res.code == 200) {
+                            window.history.back();
+                        }
+                    }
+                })
+            })
+
         })
     </script>
 </body>
