@@ -7,199 +7,198 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>文章列表</title>
     <link rel="stylesheet" href="./libs/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/iconfont.css">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="./libs/jedate/css/jeDate-test.css">
-    <link rel="stylesheet" href="./libs/jedate/css/jedate.css">
-    <!-- jq -->
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="./css/iconfont.css">
+    <link rel="stylesheet" href="./css/main.css">
     <script src="./libs/jquery-1.12.4.min.js"></script>
-    <!-- 模板引擎 -->
+    <!-- 引入模板引擎js文件 -->
     <script src="./libs/template-web.js"></script>
-
-    <!-- 引入jeDate日期插件的js文件 -->
-    <script src="./libs/jedate/js/jedate.js"></script>
-
-    <!-- 引入wangEditor的js文件 -->
-    <script src="./libs/wangEditor.js"></script>
-
 </head>
 
 <body>
     <div class="container-fluid">
         <div class="common_title">
-            文章编辑
+            文章列表
         </div>
         <div class="container-fluid common_con">
-            <form class="form-horizontal article_form" id="form">
-                <div class="form-group">
-                    <label for="inputTitle" class="col-sm-2 control-label">文章标题：</label>
-                    <div class="col-sm-8">
-                        <input type="text" name="title" class="form-control title" id="inputTitle" value="文章标题文字">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputCover" class="col-sm-2 control-label">文章封面：</label>
-                    <div class="col-sm-10">
-                        <img src="images/pic06.jpg" class="article_cover">
-                        <input name="cover" type="file" id="inputCover">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputCategory" class="col-sm-2 control-label">文章类别：</label>
-                    <div class="col-sm-2">
-                        <select class="form-control category" name="categoryId">
-                            <!-- <option>类别一</option>
-                            <option>类别二</option>
-                            <option>类别三</option>
-                            <option selected>类别四</option>
-                            <option>类别五</option> -->
+            <div class="row opt_btns">
+                <div class="col-xs-6">
+                    <form class="form-inline">
+                        <select id="selCategory" name="" class="form-control input-sm">
+                            <!-- <option value="">所有分类</option>
+                            <option>未分类</option>
+                            <option>奇趣事</option>
+                            <option>会生活</option>
+                            <option>爱旅行</option> -->
                         </select>
-                    </div>
+                        <select id="selStatus" name="" class="form-control input-sm">
+                            <option value="">所有状态</option>
+                            <option value="草稿">草稿</option>
+                            <option value="已发布">已发布</option>
+                        </select>
+                        <button id="btnSearch" class="btn btn-default btn-sm">筛选</button>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">发布时间：</label>
-                    <div class="jeinpbox col-sm-4">
-                        <input type="text" class="jeinput" id="testico" placeholder="YYYY-MM-DD" name="date">
-                        <div class="icons jebtns" onclick="jeDate('#testico',{trigger:false,format: 'YYYY-MM-DD',zIndex:30000})">
-                        </div>
-                    </div>
+                <div class="col-xs-6">
+                    <a href="article_release.html" class="btn btn-success btn-sm pull-right" id="release_btn">发表文章</a>
                 </div>
-                <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">文章内容：</label>
-                    <div id="editor" class="col-sm-8">
-                        <p>请尽情的展示的文采</p>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success btn-edit">修改</button>
-                        <button type="submit" class="btn btn-default btn-draft">存为草稿</button>
-                    </div>
-                </div>
-            </form>
+            </div>
+            <table class="table table-striped table-bordered table-hover mp20">
+                <thead>
+                    <tr>
+                        <th>标题</th>
+                        <th>作者</th>
+                        <th>分类</th>
+                        <th class="text-center">发表时间</th>
+                        <th class="text-center">状态</th>
+                        <th class="text-center" width="100">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- <tr>
+                        <td>王积千造统最头</td>
+                        <td>杰克</td>
+                        <td>奇趣事</td>
+                        <td class="text-center">2017-06-08 07:08:46</td>
+                        <td class="text-center">已发布</td>
+                        <td class="text-center">
+                            <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
+                            <a href="javascript:void(0);" class="btn btn-danger btn-xs delete">删除</a>
+                        </td>
+                    </tr> -->
+                </tbody>
+            </table>
+            <div class="row text-center">
+                <ul id="pagination-demo" class="pagination-sm"></ul>
+                <div id="tips">已经没有数据了</div>
+            </div>
         </div>
     </div>
 
-
-    <script src="./libs/http.js"></script>
-
-
-    <!-- 渲染文章分类数据的模板 -->
-    <script type="text/html" id="categoryList">
-        {{each data}}
-         <option value='{{$value.id}}'>{{$value.name}}</option>
+    <script src="libs/http.js"></script>
+    <!-- 下拉菜单模板 -->
+    <script type="text/html" id="categoroyList">
+        <option value="">所有分类</option>
+        {{ each data }}
+        <option value="{{$value.id}}">{{$value.name}}</option>
+        {{ /each }}
+    </script>
+    
+    <!-- 文字条目模板 -->
+    <script type="text/html" id="artList">
+        {{each data.data}}
+            <tr>
+                <td>{{$value.title}}</td>
+                <td>{{$value.author}}</td>
+                <td>{{$value.category}}</td>
+                <td class="text-center">{{$value.date}}</td>
+                <td class="text-center">{{$value.state}}</td>
+                <td class="text-center">
+                    <a href="article_edit.html?id={{$value.id}}" class="btn btn-default btn-xs">编辑</a>
+                    <a href="javascript:void(0);" data-id='{{$value.id}}' class="btn btn-danger btn-xs delete">删除</a>
+                </td>
+            </tr>
         {{/each}}
     </script>
+
     <script>
-        //入口函数
+        // 当页面一加载就需要将文章类别信息和文章条目信息展示在页面
         $(function () {
-            // 1.实现图片预览效果
-            $('#inputCover').on('change', function () {
-                let imgFile = this.files[0];
-                let url = URL.createObjectURL(imgFile);
-                $('.article_cover').attr('src', url);
-            })
-            // 2.让文章分类加载完成
+            //获取文章类别信息
             $.get({
                 url: BigNew.category_list,
                 success: function (res) {
-                    // console.log(res);
-                    let htmlStr = template('categoryList', res);
-                    // console.log(htmlStr);
-                    $('select.category').html(htmlStr);
-                }
-            })
-            // 3.添加日期插件 
-            //添加这个方法的目的是为了让日期插件在点击输入框的时候也能关联到日期
-            jeDate("#testico", {
-                format: "YYYY-MM-DD",
-                isTime: false,
-                minDate: "2014-09-19 00:00:00",
-                zIndex:30000
-            })
-            // 4.添加富文本编辑器
-            var E = window.wangEditor
-            var editor = new E('#editor')
-            // 或者 var editor = new E( document.getElementById('editor') )
-            editor.create()
-
-
-            //----------------------------------------------------------------------------
-            // 根据不同的文章的id获取到文章的具体数据，然后将数据渲染到页面不同的框中
-            //获取到文章的id？？？？？
-            let articleId = location.search.split('=')[1];
-            // console.log(articleId);
-            //发送ajax请求获取文章数据
-            $.get({
-                url: BigNew.article_search,
-                data: {
-                    id: articleId
-                },
-                success: function (res) {
-                    // console.log(res);
+                    console.log(res);
                     if (res.code == 200) {
-                        $('#inputTitle').val(res.data.title);
-                        $('img.article_cover').attr('src', res.data.cover);
-                        $('select.category').val(res.data.categoryId);
-                        $('#testico').val(res.data.date);
-                        editor.txt.html(res.data.content);
+                        let htmlStr = template('categoroyList', res)
+                        console.log(htmlStr);
+                        $('#selCategory').html(htmlStr)
                     }
                 }
             });
 
-            //当点击修改的按钮的时候，将文章数据更新，注册点击事件
-            $('button.btn-edit').on('click', function (e) {
-                //阻止默认行为
-                e.preventDefault();
-                //使用formData的方式来提交数据
-                let fd = new FormData($('#form')[0]);
-                fd.append('content', editor.txt.html());
-                //修改完文章。默认是已经发布
-                fd.append('state', '已发布');
-                fd.append('id', articleId);
-
-                //发送ajax请求
-                $.post({
-                    url: BigNew.article_edit,
-                    data: fd,
-                    processData: false,
-                    contentType: false,
-                    success: function (res) {
-                        if (res.code == 200) {
-                            window.history.back();
+            //封装一个获取数据的方法
+            function getData(pages,callback){
+                $.get({
+                    url:BigNew.article_query,
+                    data: {
+                        type: $("#selCategory").val(),
+                        state: $('#selStatus').val(),
+                        page:pages,
+                        perpage:perpage
+                    },
+                    success: function(res){
+                        //console.log(res);
+                        let htmlStr = template('artList',res);
+                        $('tbody').html(htmlStr);
+                        //我们获取到数据后，我们还需要在这里写代码处理，所有我们使用一个函数，使用回调
+                        if (res.data.data.length != 0 && callback != null) {
+                            $('#pagination-demo').show();
+                            $('#tips').hide();
+                            callback(res)
+                        }else if(res.data.data.length == 0){
+                            // alert('亲，没有数据');
+                            $('#pagination-demo').hide();
+                            $('#tips').show();
                         }
                     }
                 })
+            }
 
-            });
-
-
-
-            //存草稿的功能
-            $('button.btn-draft').on('click', function (e) {
-                //阻止默认行为
-                e.preventDefault();
-                //使用formData的方式来提交数据
-                let fd = new FormData($('#form')[0]);
-                fd.append('content', editor.txt.html());
-                //修改完文章。默认是已经发布
-                // fd.append('state', '已发布');
-                fd.append('id', articleId);
-
-                //发送ajax请求
-                $.post({
-                    url: BigNew.article_edit,
-                    data: fd,
-                    processData: false,
-                    contentType: false,
-                    success: function (res) {
-                        if (res.code == 200) {
-                            window.history.back();
-                        }
+            //定义两个变量，用来表示页码和条数
+            let mypage = 1;
+            let perpage = 10;
+            //页面一加载就展示文章条目数据
+            getData(mypage,function(res){
+                $('#pagination-demo').twbsPagination({
+                    totalPages: res.data.totalPage,
+                    visiblePages: 7,
+                    first: '首页',
+                    prev: '上一页',
+                    next: '下一页',
+                    last: '尾页',
+                    onPageClick: function (event, page) {
+                        mypage = page;
+                        getData(mypage, function(){});
                     }
                 })
             })
+
+            //筛选按钮注册点击事件
+            $('#btnSearch').on('click',function(e){
+                //阻止默认行为
+                e.preventDefault();
+
+                // 点击按钮的时候获取文章类型和文章状态
+                // let type = $('#selCategory').val();
+                // let state = $('#selStatus').val()
+                getData(mypage,function(res) {
+                    //搜索到的数据条目是不一样的，所以总的页数是会动态改变的
+                    $('#pagination-demo').twbsPagination('changeTotalPages',res.data.totalPage,1)
+                });
+            })
+
+            //删除文章  删除是动态生成的，需要使用事件委托来注册
+            $('tbody').on('click','.delete',function() {
+                let artId = $(this).attr('data-id');
+                // console.log(mypage);
+                if(confirm('你确定要删除吗？')) {
+                    $.post({
+                        url: BigNew.article_delete,
+                        data: {
+                            id: artId
+                        },
+                        success: function(res) {
+                            // console.log(res);
+                            // window.location.reload();
+                            getData(mypage,function(res){
+                                $('#pagination-demo').twbsPagination('changeTotalPages',res.data.totalPage,mypage)
+                            })
+                        }
+                    })
+                }
+            })
+
         })
     </script>
 </body>
